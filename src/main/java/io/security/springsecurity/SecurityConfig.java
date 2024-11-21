@@ -17,12 +17,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults());
 
         return http.build();
     }
 
+    @Bean
+    public UserDetailsService userDetailService() {
+        return new CustomUserDetailsService();
+    }
+
+    /*
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user")
@@ -30,4 +37,5 @@ public class SecurityConfig {
                 .roles("USER").build();
         return new InMemoryUserDetailsManager(user);
     }
+    */
 }
