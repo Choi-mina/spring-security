@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
         ;
 
         return http.build();
