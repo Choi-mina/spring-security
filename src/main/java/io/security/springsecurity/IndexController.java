@@ -50,4 +50,10 @@ public class IndexController {
     public String logoutSuccess() {
         return "logoutSuccess";
     }
+
+    @GetMapping("/login")
+    public String login() { return "loginPage"; }
+
+    @GetMapping("/denied")
+    public String denied() { return "denied"; }
 }
