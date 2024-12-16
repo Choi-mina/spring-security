@@ -5,15 +5,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class IndexController {
 
     @GetMapping("/")
-    public Authentication index(Authentication authentication) {
-        return authentication;
-    }
+    public String index() {return "index";}
 
     @GetMapping("/home")
     public String home() {
@@ -50,4 +49,13 @@ public class IndexController {
     public String logoutSuccess() {
         return "logoutSuccess";
     }
+
+    @GetMapping("/custom")
+    public String custom() {return "custom";}
+
+    @GetMapping("/user/{name}")
+    public String user(@PathVariable(value = "name") String name) {return name;}
+
+    @GetMapping("/admin/db")
+    public String admin() {return "admin";}
 }
