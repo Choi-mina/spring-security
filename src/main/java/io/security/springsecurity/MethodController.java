@@ -1,6 +1,9 @@
 package io.security.springsecurity;
 
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +23,17 @@ public class MethodController {
      * @PostAuthorize : 메서드가 실행되고 나서 응답을 보내기 전에 인증을 거친다
      * */
 
-    @GetMapping("/admin")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public String admin() {
-        return "admin";
-    }
+//    @GetMapping("/admin")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    public String admin() {
+//        return "admin";
+//    }
 
-    @GetMapping("/user")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
-    public String user() {
-        return "user";
-    }
+//    @GetMapping("/user")
+//    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_USER')")
+//    public String user() {
+//        return "user";
+//    }
 
     @GetMapping("/isAuthenticated")
     @PreAuthorize("isAuthenticated")
@@ -77,5 +80,47 @@ public class MethodController {
     @PostMapping("/readMap")
     public Map<String, Account> readMap() {
         return dataService.readMap();
+    }
+
+    @GetMapping("/user")
+    @Secured("ROLE_USER")
+    public String user() {
+        return "user";
+    }
+
+    @GetMapping("/admin")
+    @Secured("ADMIN")
+    public String admin() {
+        return "user";
+    }
+
+    @GetMapping("/permitAll")
+    @PermitAll
+    public String permitAll() {
+        return "permitAll";
+    }
+
+    @GetMapping("/denyAll")
+    @DenyAll
+    public String denyAll() {
+        return "denyAll";
+    }
+
+    @GetMapping("/isAdmin")
+    @IsAdmin
+    public String isAdmin() {
+        return "isAdmin";
+    }
+
+    @GetMapping("/ownerShip")
+    @OwnerShip
+    public Account ownerShip(String name) {
+        return new Account(name, false);
+    }
+
+    @GetMapping("/delete")
+    @PreAuthorize("@myAuthorizer.isUser(#root)")
+    public String delete() {
+        return "delete";
     }
 }
