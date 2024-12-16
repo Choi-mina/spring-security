@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MethodController {
 
+    /**
+     * @PreAuthorize : 메서드가 실행되기 전에 인증을 거친다
+     * @PostAuthorize : 메서드가 실행되고 나서 응답을 보내기 전에 인증을 거친다
+     * */
+
     @GetMapping("/admin")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String admin() {
