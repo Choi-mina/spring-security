@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class IndexController {
 
     @GetMapping("/")
-    public Authentication index(Authentication authentication) {
-        return authentication;
+    public String index() {
+        return "index";
     }
 
     @GetMapping("/home")
@@ -50,4 +50,13 @@ public class IndexController {
     public String logoutSuccess() {
         return "logoutSuccess";
     }
+
+    @GetMapping("/user")
+    public String user() {return "user";}
+
+    @GetMapping("/db")
+    public String db() {return "db";}
+
+    @GetMapping("/admin")
+    public String admin() {return "admin";}
 }
