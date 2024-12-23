@@ -5,14 +5,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class IndexController {
 
+    private final DataService dataService;
+
+    public IndexController(DataService dataService) {
+        this.dataService = dataService;
+    }
+
     @GetMapping("/")
-    public Authentication index(Authentication authentication) {
-        return authentication;
+    public String index() {
+        return "index";
     }
 
     @GetMapping("/home")
@@ -49,5 +56,20 @@ public class IndexController {
     @GetMapping("/logoutSuccess")
     public String logoutSuccess() {
         return "logoutSuccess";
+    }
+
+    @GetMapping("/user")
+    public String user() {
+        return dataService.getUser();
+    }
+
+    @GetMapping("/owner")
+    public Account owner(@RequestParam("name") String name) {
+        return dataService.getOwner(name);
+    }
+
+    @GetMapping("/display")
+    public String display() {
+        return dataService.display();
     }
 }
