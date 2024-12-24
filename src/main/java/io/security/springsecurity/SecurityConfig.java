@@ -51,13 +51,13 @@ public class SecurityConfig {
 //                        .requestMatchers("/db").hasAuthority("ROLE_DB")
 //                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
 //                        .anyRequest().permitAll())
-////                .formLogin(form -> form.successHandler(new AuthenticationSuccessHandler() {
-////                    @Override
-////                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-////                        eventPublisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
-////                        response.sendRedirect("/");
-////                    }
-////                }))
+//                .formLogin(form -> form.successHandler(new AuthenticationSuccessHandler() {
+//                    @Override
+//                    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//                        eventPublisher.publishEvent(new CustomAuthenticationSuccessEvent(authentication));
+//                        response.sendRedirect("/");
+//                    }
+//                }))
 //                .formLogin(Customizer.withDefaults())
 //                .authenticationProvider(customAuthenticationProvider())
 //                .csrf(AbstractHttpConfigurer::disable);
@@ -88,17 +88,17 @@ public class SecurityConfig {
         authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class);
         return authenticationEventPublisher;
     }
-
-    @Bean
-    public CustomAuthenticationProvider2 customAuthenticationProvider2() {
-        return new CustomAuthenticationProvider2(authenticationEventPublisher(null));
-    }
-
-    @Bean
-    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher eventPublisher) {
-        DefaultAuthenticationEventPublisher publisher = new DefaultAuthenticationEventPublisher(eventPublisher);
-        return publisher;
-    }
+//
+//    @Bean
+//    public CustomAuthenticationProvider2 customAuthenticationProvider2() {
+//        return new CustomAuthenticationProvider2(authenticationEventPublisher(null));
+//    }
+//
+//    @Bean
+//    public DefaultAuthenticationEventPublisher authenticationEventPublisher(ApplicationEventPublisher eventPublisher) {
+//        DefaultAuthenticationEventPublisher publisher = new DefaultAuthenticationEventPublisher(eventPublisher);
+//        return publisher;
+//    }
 
     @Bean
     public UserDetailsService userDetailsService() {
