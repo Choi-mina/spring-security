@@ -85,10 +85,10 @@ public class SecurityConfig {
 
         DefaultAuthenticationEventPublisher authenticationEventPublisher = new DefaultAuthenticationEventPublisher(applicationEventPublisher);
         authenticationEventPublisher.setAdditionalExceptionMappings(mapping); // CustomException 을 던지면 CustomAuthenticationFailureEvent 를 발행하도록 추가 함
-        authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class);
+        authenticationEventPublisher.setDefaultAuthenticationFailureEvent(DefaultAuthenticationFailureEvent.class); // 기본 이벤트 설정
         return authenticationEventPublisher;
     }
-//
+
 //    @Bean
 //    public CustomAuthenticationProvider2 customAuthenticationProvider2() {
 //        return new CustomAuthenticationProvider2(authenticationEventPublisher(null));
