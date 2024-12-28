@@ -3,6 +3,7 @@ package io.security.springsecurity;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -19,16 +20,21 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceConfigurationError;
+import java.util.concurrent.Callable;
 
 @RestController
+@RequiredArgsConstructor
 public class IndexController {
 
-    AuthenticationTrustResolverImpl trustResolver = new AuthenticationTrustResolverImpl();
+//    AuthenticationTrustResolverImpl trustResolver = new AuthenticationTrustResolverImpl();
+
+    private final AsyncService asyncService;
 
     @GetMapping("/")
     public String index() {
-        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
-        return trustResolver.isAnonymous(authentication) ? "anonymous" : "authenticated";  // 인증 객체 타입이 anonymous인지 확인
+//        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+//        return trustResolver.isAnonymous(authentication) ? "anonymous" : "authenticated";  // 인증 객체 타입이 anonymous인지 확인
+        return "index";
     }
 
     @GetMapping("/home")
@@ -112,4 +118,35 @@ public class IndexController {
 //            return List.of(new MemberDto("user", "1111"));
 //        return Collections.emptyList();
 //    }
+
+    @GetMapping("/callable")
+    public Callable<Authentication> call() {
+
+        // 메인 Thread 영역
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+        System.out.println("securityContext = " + securityContext);
+        System.out.println("Parent Thread = " + Thread.currentThread().getName());
+
+        return new Callable<Authentication>() {
+            @Override
+            public Authentication call() throws Exception {
+                SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+                System.out.println("securityContext = " + securityContext);
+                System.out.println("Parent Thread = " + Thread.currentThread().getName());
+                return securityContext.getAuthentication();
+            }
+        };
+    }
+
+    @GetMapping("/async")
+    public Authentication async() {
+        // 부모 자식간에 객체가 공유 안됨
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+        System.out.println("securityContext = " + securityContext);
+        System.out.println("Parent Thread = " + Thread.currentThread().getName());
+
+        asyncService.asyncMethod();
+
+        return securityContext.getAuthentication();
+    }
 }
