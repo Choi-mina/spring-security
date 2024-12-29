@@ -1,6 +1,5 @@
 spring:
-  security:
-    user:
-      name: user
-      password: 1111
-      roles: USER
+  data:
+    redis:
+      host: localhost
+      port: 6379

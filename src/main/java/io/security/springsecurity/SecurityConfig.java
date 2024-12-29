@@ -1,10 +1,14 @@
 package io.security.springsecurity;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,19 +19,43 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ApplicationContext context) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/db").hasAuthority("ROLE_DB")
+                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults())
+                .with(MyCustomDsl.myCustomDsl(), dsl -> dsl.setFlag(true))
+        ;
 
         return http.build();
     }
 
+//    @Bean
+//    @Order(1)
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//
+//        // /api로 시작하는 api는 해당 필터를 타게 됨.
+//        http
+//                .securityMatchers((matchers) -> matchers.requestMatchers("/api/**"))
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .anyRequest().permitAll());
+//
+//        return http.build();
+//    }
+
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user")
-                .password("{noop}1111")
-                .roles("USER").build();
-        return new InMemoryUserDetailsManager(user);
+        UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
+        UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
+        UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "SECURE").build();
+        return new InMemoryUserDetailsManager(user, db, admin);
     }
 }
