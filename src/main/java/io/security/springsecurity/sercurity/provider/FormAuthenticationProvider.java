@@ -1,6 +1,8 @@
 package io.security.springsecurity.sercurity.provider;
 
 import io.security.springsecurity.domain.dto.AccountContext;
+import io.security.springsecurity.sercurity.details.FormAuthenticationDetails;
+import io.security.springsecurity.sercurity.exception.SecretException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,6 +30,11 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
         if(!passwordEncoder.matches(password, accountContext.getPassword())) {  // 비밀번호가 일치하지 않는 경우
             throw new BadCredentialsException("Invalid password");
+        }
+
+        String secretKey = ((FormAuthenticationDetails) authentication.getDetails()).getSecretKey();
+        if(secretKey == null || !secretKey.equals("secret")) {
+            throw new SecretException("Invalid secret key");
         }
 
         // 새로운 인증객체를 만들어 반환
