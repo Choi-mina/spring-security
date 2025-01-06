@@ -1,7 +1,7 @@
 package io.security.springsecurity.sercurity.config;
 
 import io.security.springsecurity.sercurity.filters.RestAuthenticationFilter;
-import io.security.springsecurity.sercurity.handler.FormAccessDeniedHandler;
+import io.security.springsecurity.sercurity.handler.*;
 import io.security.springsecurity.sercurity.service.FormUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +35,10 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationProvider restAuthenticationProvider;
-    private final AuthenticationSuccessHandler authenticationSuccessHandler;
-    private final AuthenticationFailureHandler authenticationFailureHandler;
+    private final FormAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final FormAuthenticationFailureHandler authenticationFailureHandler;
+    private final RestAuthenticationSuccessHandler restAuthenticationSuccessHandler;
+    private final RestAuthenticationFailureHandler restAuthenticationFailureHandler;
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
 
     @Bean
@@ -90,6 +92,8 @@ public class SecurityConfig {
     private RestAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
         RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter();
         restAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        restAuthenticationFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
+        restAuthenticationFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
         return restAuthenticationFilter;
     }
 
