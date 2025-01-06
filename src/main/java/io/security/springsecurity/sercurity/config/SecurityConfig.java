@@ -4,6 +4,7 @@ import io.security.springsecurity.sercurity.service.FormUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,16 +32,12 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.loginPage("/login").permitAll())
-                .userDetailsService(userDetailsService) // 커스텀 userDetailService
+//                .userDetailsService(userDetailsService) // 커스텀 userDetailService
+        // AuthenticationFilter > AuthenticationManager > AuthenticationProvider > UserDetailService
+                .authenticationProvider(authenticationProvider)
         ;
 
         return http.build();
-    }
-
-    // password 암호화 하기 위해 passwordEncoder 빈 정의
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 //    @Bean
