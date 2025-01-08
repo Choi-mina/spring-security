@@ -1,5 +1,6 @@
 package io.security.springsecurity.sercurity.config;
 
+import io.security.springsecurity.sercurity.dsl.RestApiDsl;
 import io.security.springsecurity.sercurity.entrypoint.RestAuthenticationEntryPoint;
 import io.security.springsecurity.sercurity.filters.RestAuthenticationFilter;
 import io.security.springsecurity.sercurity.handler.*;
@@ -87,25 +88,29 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 //                .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
+//                .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                         .accessDeniedHandler(new RestAccessDeniedHandler())
                 )
+                .with(new RestApiDsl<>(), restDsl -> restDsl
+                        .restSuccessHandler(restAuthenticationSuccessHandler)
+                        .restFailureHandler(restAuthenticationFailureHandler)
+                        .loginPage("/api/login")
+                        .loginProcessingUrl("/api/login")   // filter보다 우선시됨
+                        )
         ;
 
         return http.build();
     }
-
-    // 필터 생성
-    private RestAuthenticationFilter restAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) {
-        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter(http);
-        restAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        restAuthenticationFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
-        restAuthenticationFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
-        return restAuthenticationFilter;
-    }
+//    private RestAuthenticationFilter restAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) {
+//        RestAuthenticationFilter restAuthenticationFilter = new RestAuthenticationFilter(http);
+//        restAuthenticationFilter.setAuthenticationManager(authenticationManager);
+//        restAuthenticationFilter.setAuthenticationSuccessHandler(restAuthenticationSuccessHandler);
+//        restAuthenticationFilter.setAuthenticationFailureHandler(restAuthenticationFailureHandler);
+//        return restAuthenticationFilter;
+//    }
 
 //    @Bean
 //    public UserDetailsService userDetailsService() {
