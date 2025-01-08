@@ -1,5 +1,6 @@
 package io.security.springsecurity.sercurity.config;
 
+import io.security.springsecurity.sercurity.entrypoint.RestAuthenticationEntryPoint;
 import io.security.springsecurity.sercurity.filters.RestAuthenticationFilter;
 import io.security.springsecurity.sercurity.handler.*;
 import io.security.springsecurity.sercurity.service.FormUserDetailsService;
@@ -76,14 +77,22 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = managerBuilder.build();
 
         http
-                .securityMatcher("/api/login")
+                .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api", "/api/login").permitAll()
+                        .requestMatchers("/api/user").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/manager").hasAuthority("ROLE_MANAGER")
+                        .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(restAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                        .accessDeniedHandler(new RestAccessDeniedHandler())
+                )
         ;
 
         return http.build();
